@@ -3,6 +3,20 @@
 
 #if defined(__XS3A__)
 
+.section .cp.rodata, "ac", @progbits
+.cc_top zero_shr.data
+.p2align 2
+zero_shr:
+.long  0
+.long  0
+.long  0
+.long  0
+.long  0
+.long  0
+.long  0
+.long  0
+.cc_bottom zero_shr.data
+
 .text
 .align 16;
 .issue_mode dual
@@ -93,21 +107,9 @@ td_block_fir_compute_second_half:
   {bt t, td_block_fir_compute_second_half; add data_p, data_p, r3}
 
 td_block_fir_compute_done:
-  {ldw s, filter_struct_p[2]; ldaw t, sp[6]}
-
-  //In order to use VLSAT we need 8 shift values from memory. This puts them into memory
-  //as fast as possible. 
-  std s, s, sp[3]
-  std s, s, sp[4]
-  std s, s, sp[5]
-  std s, s, sp[6]
-  
+  {ldaw t, cp[zero_shr]}
   {vlsat t[0] ; nop}
 
-  {ldw s, filter_struct_p[3]; nop}
-  {vstr t[0] ; nop}
-  vlashr t[0], s
-  
   vstr output_block_p[0]
 
   ldd r5, r4, sp[0]

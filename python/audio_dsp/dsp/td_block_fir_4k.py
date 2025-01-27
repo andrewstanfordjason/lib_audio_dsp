@@ -167,24 +167,7 @@ def _emit_filter(fh, coefs_padded, name, block_length, bits_per_element=32):
         counter += 1
     fh.write("};\n")
 
-    if vpu_shr - exp > 0:
-        accu_shr = 0
-        accu_shl = exp - vpu_shr
-    else:
-        accu_shr = exp - vpu_shr
-        accu_shl = 0
-
-    # then emit the td_block_fir_filter_t struct
-    filter_struct_name = "td_block_fir_filter_" + name
-    fh.write("td_block_fir_filter_t " + filter_struct_name + " = {\n")
-    fh.write("\t.coefs = " + coef_data_name + ",\n")
-    fh.write("\t.block_count = " + str(len(coefs_padded) // block_length) + ",\n")
-    fh.write("\t.accu_shr = " + str(accu_shr) + ",\n")
-    fh.write("\t.accu_shl = " + str(accu_shl) + ",\n")
-    fh.write("};\n")
-    fh.write("\n")
-
-    return filter_struct_name, quantised_coefs
+    return quantised_coefs
 
 
 def generate_td_fir(
@@ -256,7 +239,7 @@ def generate_td_fir(
         # The count of blocks in the filter ( the data is at least 2 more)
         filter_block_count = target_filter_bank_length // frame_advance
 
-        filter_struct_name, quantized_coefs = _emit_filter(
+        quantized_coefs = _emit_filter(
             fh, prepared_coefs, filter_name, frame_advance
         )
 
@@ -279,7 +262,7 @@ def generate_td_fir(
         fh.write("#define " + filter_name + "_FRAME_ADVANCE (" + str(frame_advance) + ")\n")
         fh.write("#define " + filter_name + "_FRAME_OVERLAP (" + str(0) + ")\n")
 
-    return filter_struct_name, prepared_coefs, quantized_coefs
+    return prepared_coefs, quantized_coefs
 
 
 if __name__ == "__main__":

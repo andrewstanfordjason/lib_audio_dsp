@@ -90,3 +90,11 @@ void td_block_fir_compute(
     int32_t samples_out[TD_BLOCK_FIR_LENGTH],
     td_block_fir_data_t * fir_data, 
     td_block_fir_filter_t * fir_filter);
+
+
+
+void td_block_fir_4k(
+    int32_t output_block[8],
+    int32_t data[4096+8],
+    int32_t filter[4096]
+);

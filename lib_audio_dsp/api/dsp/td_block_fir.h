@@ -98,3 +98,13 @@ void td_block_fir_4k(
     int32_t data[4096+8],
     int32_t filter[4096]
 );
+
+
+void td_block_fir_compute_8_tap(
+    int32_t * output_data,
+    int32_t * input_data, 
+    int32_t coefs[8],
+    unsigned length
+);
+
+

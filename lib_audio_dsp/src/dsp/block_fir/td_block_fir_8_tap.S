@@ -32,7 +32,7 @@ void td_block_fir_compute_8_tap(
 */
 
 #define FUNCTION_NAME   td_block_fir_compute_8_tap
-#define NSTACKWORDS     (6+8) + 32
+#define NSTACKWORDS     2
 
 #define output_data_p      r0
 #define input_data_p       r1
@@ -40,24 +40,22 @@ void td_block_fir_compute_8_tap(
 #define length             r3
 
 #define s r4
-#define data_p r6
-#define thirtytwo r9
+#define thirtytwo r5
 
 #define t r11
 
 .cc_top FUNCTION_NAME.function,FUNCTION_NAME
 FUNCTION_NAME:
+FUNCTION_NAME_asm:
   dualentsp NSTACKWORDS
   std r5, r4, sp[0]
-  std r7, r6, sp[1]
-  std r9, r8, sp[2]
   {vldc coefs_p[0] ; shr length, length, 3}
   {sub length, length, 1; ldc thirtytwo, 32}
   {ldc s, 64 - 4; add input_data_p, input_data_p, thirtytwo} 
   {ldaw t, cp[zero_shr]; sub input_data_p, input_data_p, 4}
-
-loop:
-  vclrdr
+  {vclrdr;nop}
+td_block_fir_compute_8_tap_loop:
+  
   {vlmaccr input_data_p[0] ; sub input_data_p, input_data_p, 4 }
   {vlmaccr input_data_p[0] ; sub input_data_p, input_data_p, 4 }
   {vlmaccr input_data_p[0] ; sub input_data_p, input_data_p, 4 }
@@ -69,13 +67,11 @@ loop:
 
   {vlsat t[0] ; nop}
   vstr output_data_p[0]
-  {add output_data_p, output_data_p, thirtytwo}
+  {vclrdr; add output_data_p, output_data_p, thirtytwo}
 
-  {bt length, loop; sub length, length, 1}
+  {bt length, td_block_fir_compute_8_tap_loop; sub length, length, 1}
 
   ldd r5, r4, sp[0]
-  ldd r7, r6, sp[1]
-  ldd r9, r8, sp[2]
   { nop                ; retsp NSTACKWORDS           }
 
 .L_func_end_unpack:

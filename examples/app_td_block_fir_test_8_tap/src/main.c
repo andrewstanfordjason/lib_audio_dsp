@@ -25,7 +25,7 @@ void td_block_fir_compute_8_tap_ref(
 
 }
 
-#define OUTPUT_LENGTH 32
+#define OUTPUT_LENGTH (2<<9)
 
 int main(void){
 
@@ -44,7 +44,10 @@ int main(void){
     td_block_fir_compute_8_tap(output_data, input_data, coefs_test_0, OUTPUT_LENGTH);
     
     for(int i=0;i<OUTPUT_LENGTH;i++){
-        printf("%ld %ld\n", output_data_ref[i], output_data[i]);
+        int delta = output_data_ref[i] - output_data[i];
+        delta = delta *delta;
+        if(delta > 64)
+            printf("Error\n");
     }
-    exit(1);
+    exit(0);
 }

@@ -65,7 +65,7 @@ td_block_fir_compute_8_tap_loop:
   {vlmaccr input_data_p[0] ; sub input_data_p, input_data_p, 4 }
   {vlmaccr input_data_p[0] ; add input_data_p, input_data_p, s }
 
-  {vlsat t[0] ; nop}
+  //{vlsat t[0] ; nop}
   vstr output_data_p[0]
   {vclrdr; add output_data_p, output_data_p, thirtytwo}
 
